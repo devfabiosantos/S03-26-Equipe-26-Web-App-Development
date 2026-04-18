@@ -6,7 +6,7 @@ COPY mvnw pom.xml ./
 COPY src ./src
 
 RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests -Dspring.profiles.active=prod
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
