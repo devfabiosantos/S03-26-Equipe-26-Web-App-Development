@@ -1,8 +1,17 @@
-FROM eclipse-temurin:21-jdk
-
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+COPY src ./src
 
+RUN chmod +x mvnw
+RUN ./mvnw clean package -DskipTests -Dspring.profiles.active=prod
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
